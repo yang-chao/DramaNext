@@ -1,0 +1,28 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="48dp"
+    android:height="48dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- Warm terracotta rounded square background -->
+    <path
+        android:fillColor="#C84B31"
+        android:pathData="M26,0 H82 Q108,0 108,26 V82 Q108,108 82,108 H26 Q0,108 0,82 V26 Q0,0 26,0 Z" />
+    <!-- Subtle inner card frame -->
+    <path
+        android:fillColor="@android:color/transparent"
+        android:strokeColor="#44FFF6EC"
+        android:strokeWidth="3.5"
+        android:pathData="M30,18 H78 Q86,18 86,26 V82 Q86,90 78,90 H30 Q22,90 22,82 V26 Q22,18 30,18 Z" />
+    <!-- Play triangle (bottom-left center) -->
+    <path
+        android:fillColor="#FFF6EC"
+        android:pathData="M37,54 L37,71 L53,62.5 Z" />
+    <!-- Bold upward swipe arrow (right side: auto-next gesture) -->
+    <path
+        android:fillColor="@android:color/transparent"
+        android:strokeColor="#FFF6EC"
+        android:strokeWidth="7.5"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:pathData="M65,72 L65,34 M53,46 L65,33 L77,46" />
+</vector>

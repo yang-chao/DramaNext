@@ -26,6 +26,10 @@ class Prefs(context: Context) {
         sp.edit().putString(KEY_LAST, event).apply()
     }
 
+    fun resetStats() {
+        sp.edit().putInt(KEY_COUNT, 0).putString(KEY_LAST, "计数已重置").apply()
+    }
+
     companion object {
         private const val KEY_ACT = "act_enabled"
         private const val KEY_PROBE = "probe_enabled"

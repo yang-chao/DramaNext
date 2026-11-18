@@ -16,6 +16,17 @@ import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+
+data class RuntimeSnapshot(
+    val connected: Boolean = false,
+    val activeRuleName: String? = null,
+    val stageLabel: String = "空闲待命",
+    val detail: String = "等待进入短剧应用",
+    val updatedAt: String = "",
+)
 
 class AutoNextService : AccessibilityService() {
 
@@ -50,6 +61,12 @@ class AutoNextService : AccessibilityService() {
         probe = ProbeLog(File(filesDir, "probe.log"))
         log("service connected; rules=${AppRules.ALL_PACKAGES}")
         prefs.recordEvent("服务已连接 ${now()}")
+        _runtime.value = RuntimeSnapshot(
+            connected = true,
+            stageLabel = "服务已就绪",
+            detail = "等待进入短剧应用",
+            updatedAt = now(),
+        )
     }
 
     override fun onAccessibilityEvent(event: AccessibilityEvent?) {
@@ -68,6 +85,7 @@ class AutoNextService : AccessibilityService() {
 
     override fun onDestroy() {
         handler.removeCallbacksAndMessages(null)
+        _runtime.value = RuntimeSnapshot(connected = false, stageLabel = "服务未连接", detail = "请在无障碍设置中开启")
         super.onDestroy()
     }
 
@@ -86,6 +104,17 @@ class AutoNextService : AccessibilityService() {
         maybeProbe(snap, state, trigger)
 
         val decision = engine.onState(state, SystemClock.uptimeMillis())
+        _runtime.value = when (state) {
+            AdState.NotAd -> RuntimeSnapshot(true, snap.rule.name, "播放正常剧集", "未检测到广告 (${snap.nodes.size} 节点)", now())
+            is AdState.Playing -> RuntimeSnapshot(
+                true,
+                snap.rule.name,
+                state.remainingSec?.let { "广告播放中 (${it}s)" } ?: "广告播放中",
+                state.evidence,
+                now(),
+            )
+            is AdState.Finished -> RuntimeSnapshot(true, snap.rule.name, "广告已结束", state.evidence, now())
+        }
         val key = state::class.simpleName + "|" + decision.reason.substringBefore(':')
         if (key != lastStateKey) {
             lastStateKey = key
@@ -229,6 +258,8 @@ class AutoNextService : AccessibilityService() {
         private const val POLL_KEEPALIVE_MS = 15_000L
         private const val MAX_NODES = 1500
         private const val MAX_DEPTH = 80
+        private val _runtime = MutableStateFlow(RuntimeSnapshot())
+        val runtime: StateFlow<RuntimeSnapshot> = _runtime.asStateFlow()
     }
 }
 
