@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">短剧自动下一集</string>
+    <string name="service_label">短剧自动下一集</string>
+    <string name="service_summary">广告播完后自动划到下一集</string>
+    <string name="service_description">仅在你选择的短剧 App（当前：红果短剧）内工作。读取屏幕上的文字以判断广告是否播放结束，结束后自动上划一次进入下一集。不会点击广告，不会跳过广告，不收集或上传任何内容。</string>
+</resources>
